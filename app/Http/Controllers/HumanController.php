@@ -45,11 +45,18 @@ class HumanController extends Controller
 
     public function store(HumanRequest $request)
     {
-        $human = new Human();
-        $human->fill($request->all());
-        $human->save();
-        
-        return redirect()->action('HomeController@index');
+        $address = \Correios::cep($request->zipcode);
+
+        if (empty($address)) {
+            return redirect()->action('HomeController@index');
+            
+        } else {
+            $human = new Human();
+            $human->fill($request->all());
+            $human->save();
+
+            return redirect()->action('HomeController@index');
+        }
     }
 
     /**
@@ -72,7 +79,7 @@ class HumanController extends Controller
     public function edit($id)
     {
         $human = $this->human->findOrFail($id);
-        return view ('human.edit', compact('human'));
+        return view('human.edit', compact('human'));
     }
 
     /**
@@ -84,11 +91,11 @@ class HumanController extends Controller
      */
     public function update(HumanRequest $request, $id)
     {
-       $human = $this->human->findOrFail($id);
-       $human->fill($request->all());
-       $human->save();
+        $human = $this->human->findOrFail($id);
+        $human->fill($request->all());
+        $human->save();
 
-       return redirect()->action('HomeController@index');
+        return redirect()->action('HomeController@index');
     }
 
     /**
